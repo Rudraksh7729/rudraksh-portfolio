@@ -30,14 +30,14 @@ export const metadata = {
     description:
       "3rd year Computer Science student interested in web development and software development. Open to internships, projects, and learning opportunities.",
     type: "website",
-    images: ["/ganesh.jpg"],
+    images: ["/rudraksh.jpg"],
   },
   twitter: {
     card: "summary_large_image",
     title: "Rudraksh Bansal | 3rd Year CSE Student",
     description:
       "CSE student focused on web development and software development. Open to internships and learning opportunities.",
-    images: ["/ganesh.jpg"],
+    images: ["/rudraksh.jpg"],
   },
 };
 

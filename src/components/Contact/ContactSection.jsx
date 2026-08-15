@@ -12,8 +12,6 @@ import {
   Upload,
   File,
 } from "lucide-react";
-import { site } from "@/lib/site";
-
 export default function ContactSection() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.2 });
@@ -103,12 +101,16 @@ export default function ContactSection() {
 
     if (!formState.email.trim()) {
       newErrors.email = "Email is required";
-    } else if (!/\S+@\S+\.\S+/.test(formState.email)) {
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formState.email.trim())) {
       newErrors.email = "Email is invalid";
     }
 
     if (!formState.message.trim()) {
       newErrors.message = "Message is required";
+    }
+
+    if (file && file.size > 5 * 1024 * 1024) {
+      newErrors.submit = "Attachment must be 5MB or smaller.";
     }
 
     setErrors(newErrors);
@@ -118,17 +120,19 @@ export default function ContactSection() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (isSubmitting) return;
     if (!validateForm()) return;
 
     setIsSubmitting(true);
     setErrors({});
+    setIsSuccess(false);
 
     try {
       const data = new FormData();
-      data.append("firstName", formState.firstName);
-      data.append("lastName", formState.lastName);
-      data.append("email", formState.email);
-      data.append("message", formState.message);
+      data.append("firstName", formState.firstName.trim());
+      data.append("lastName", formState.lastName.trim());
+      data.append("email", formState.email.trim());
+      data.append("message", formState.message.trim());
       if (file) {
         data.append("file", file);
       }
@@ -138,21 +142,15 @@ export default function ContactSection() {
         body: data,
       });
 
-      const result = await response.json();
+      let result = {};
+      try {
+        result = await response.json();
+      } catch {
+        result = {};
+      }
 
       if (response.ok && result.success) {
         setIsSuccess(true);
-
-        if (
-          site.socials.whatsapp &&
-          !site.socials.whatsapp.includes("XXXXXXXXXX")
-        ) {
-          const waText = encodeURIComponent(
-            `Hi ${site.name},\n\nI just submitted a contact form on your portfolio!\n\nName: ${formState.firstName} ${formState.lastName}\nEmail: ${formState.email}\nMessage: ${formState.message}`,
-          );
-          const waUrl = `https://wa.me/${site.socials.whatsapp}?text=${waText}`;
-          window.open(waUrl, "_blank", "noopener,noreferrer");
-        }
 
         setFormState({
           firstName: "",
@@ -167,7 +165,9 @@ export default function ContactSection() {
         }, 3000);
       } else {
         setErrors({
+          ...(result.fieldErrors || {}),
           submit:
+            result.error ||
             "Something went wrong while sending your message. Please try again or reach out directly via Email or WhatsApp.",
         });
       }
@@ -217,12 +217,12 @@ export default function ContactSection() {
             {/* Profile Image with Gradient overlay */}
             <motion.div
               variants={itemVariants}
-              className="glass relative w-full h-[320px] md:h-[400px] overflow-hidden rounded-2xl border border-white/10 bg-black/20 flex items-center justify-center"
+              className="glass relative w-full h-[320px] md:h-[400px] overflow-hidden rounded-2xl border border-white/10 bg-white flex items-center justify-center"
             >
               <img
-                src="/ganesh.jpg"
+                src="/rudraksh.jpg"
                 alt="Rudraksh Bansal"
-                className="max-h-full max-w-full object-contain"
+                className="h-full w-full object-contain object-center"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
               <div className="absolute bottom-4 left-4">

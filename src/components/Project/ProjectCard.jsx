@@ -243,16 +243,19 @@ export function ProjectCard({
         {/* Image section */}
         <div className="relative w-full bg-neutral-200 dark:bg-[#0d0d10]">
           <div className="relative aspect-[7/4] w-full overflow-hidden transition-transform duration-500 ease-in-out group-hover:translate-y-1/2 z-10 rounded-t-3xl">
-            <Image
-              src={image}
-              alt={title}
-              fill
-              className="object-cover transition-transform duration-500 ease-in-out group-hover:scale-105"
-            />
+            {/* Inset wrapper: slight zoom-out/padding so the full screenshot stays visible */}
+            <div className="absolute inset-3 sm:inset-4">
+              <Image
+                src={image}
+                alt={title}
+                fill
+                className="object-contain transition-transform duration-500 ease-in-out group-hover:scale-105"
+              />
+            </div>
           </div>
 
-          {/* Role badge */}
-          <div className="group-hover:hidden absolute top-4 left-4 bg-transparent border border-white text-white px-4 py-1.5 rounded-full flex items-center z-30">
+          {/* Role badge — inset enough to clear the card’s rounded-corner clip */}
+          <div className="group-hover:hidden absolute top-5 left-5 sm:top-6 sm:left-6 bg-transparent border border-white text-white px-4 py-1.5 rounded-full flex items-center z-30 whitespace-nowrap">
             <span className="text-sm">{role}</span>
           </div>
 
